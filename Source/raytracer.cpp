@@ -90,7 +90,9 @@ bool ClosestIntersection(
     float t = x.x;
     float u = x.y;
     float v = x.z;
-    if (CheckIntersection( u, v ) && t < closestIntersection.distance)
+    if (t < closestIntersection.distance && 
+        t >= 0 && 
+        CheckIntersection( u, v ) )
     {
       closestIntersection.distance = t;
       closestIntersection.position = start + t * dir;
