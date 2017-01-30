@@ -19,8 +19,9 @@ struct Intersection
 /* ----------------------------------------------------------------------------*/
 /* GLOBAL VARIABLES                                                            */
 
-const int SCREEN_WIDTH = 500;
-const int SCREEN_HEIGHT = 500;
+#define MOVE 0.1f;
+const int SCREEN_WIDTH = 100;
+const int SCREEN_HEIGHT = 100;
 SDL_Surface* screen;
 float focalLength = SCREEN_HEIGHT / 4.0f;
 vec3 cameraPos(0,0,-1.5);
@@ -111,6 +112,28 @@ void Update()
 	float dt = float(t2-t);
 	t = t2;
 	cout << "Render time: " << dt << " ms." << endl;
+  
+  Uint8* keystate = SDL_GetKeyState( 0 );
+  if( keystate[SDLK_UP] )
+  {
+  // Move camera forward
+    cameraPos.z += MOVE;
+  }
+  if( keystate[SDLK_DOWN] )
+  {
+  // Move camera backward
+    cameraPos.z -= MOVE;
+  }
+  if( keystate[SDLK_LEFT] )
+  {
+  // Move camera to the left
+    cameraPos.x -= MOVE;
+  }
+  if( keystate[SDLK_RIGHT] )
+  {
+  // Move camera to the right
+    cameraPos.x += MOVE;
+  }
 }
 
 void Draw()
