@@ -22,7 +22,7 @@ struct Intersection
 const int SCREEN_WIDTH = 500;
 const int SCREEN_HEIGHT = 500;
 SDL_Surface* screen;
-float focalLength = SCREEN_HEIGHT / 2.0f;
+float focalLength = SCREEN_HEIGHT / 4.0f;
 vec3 cameraPos(0,0,-1.5);
 vector<Triangle> triangles;
 int t;
@@ -60,7 +60,7 @@ bool CheckIntersection( float u, float v )
 {
     if (u > 0 && 
         v > 0 && 
-        u + v < 1)
+        u + v <= 1)
     {
       return true;
     }
@@ -75,7 +75,6 @@ bool ClosestIntersection(
   Intersection& closestIntersection )
 {
   bool result = false;
-  float m = std::numeric_limits<float>::max(); 
   for (unsigned i=0; i<triangles.size(); i++)
   {
     vec3 v0 = triangles[i].v0;
@@ -91,7 +90,7 @@ bool ClosestIntersection(
     float t = x.x;
     float u = x.y;
     float v = x.z;
-    if (CheckIntersection( u, v ))
+    if (CheckIntersection( u, v ) && t < closestIntersection.distance)
     {
       closestIntersection.distance = t;
       closestIntersection.position = start + t * dir;
@@ -123,6 +122,7 @@ void Draw()
 		{
       vec3 d(x - SCREEN_WIDTH / 2.0f, y - SCREEN_HEIGHT / 2.0f, focalLength);
       Intersection inter;
+      inter.distance = numeric_limits<float>::max();
       vec3 color;
       if (ClosestIntersection(cameraPos, d, triangles, inter))
       {
