@@ -121,25 +121,41 @@ void Update()
   Uint8* keystate = SDL_GetKeyState( 0 );
 
 
+	float yaw;
+	yaw =  (-angle /180) * PI ;
+	R = mat3(cos(yaw), 0.0, -sin(yaw),  // 1. column
+					 0, 1.0, 0.0,  // 2. column
+					 sin(yaw), 0, cos(yaw)); // 3. column
+
+
+	vec3 forward(R[2][0], R[2][1], R[2][2]);
+	vec3 down(R[1][0], R[1][1], R[1][2]);
+	vec3 right(R[0][0], R[0][1], R[0][2]);
+
+
+	forward *= 0.1;
+	right *= 0.1;
+
   if( keystate[SDLK_UP] )
   {
   // Move camera forward
-    cameraPos.z += MOVE;
+    cameraPos +=  forward ;
+
   }
   if( keystate[SDLK_DOWN] )
   {
   // Move camera backward
-    cameraPos.z -= MOVE;
+    cameraPos -= forward;
   }
   if( keystate[SDLK_LEFT] )
   {
   // Move camera to the left
-    cameraPos.x -= MOVE;
+    cameraPos -= right;
   }
   if( keystate[SDLK_RIGHT] )
   {
   // Move camera to the right
-    cameraPos.x += MOVE;
+    cameraPos += right;
   }
 
 	if( keystate[SDLK_a]){
@@ -150,9 +166,14 @@ void Update()
 		angle -= 5.0;
 	}
 
-	float yaw;
-	yaw =  (angle /180) * PI ;
 
+
+	cout << angle;
+
+
+
+	yaw =  (angle /180) * PI ;
+	//vec3 forward(R[2][0], R[2][1], R[2][2]);
 	R = mat3(cos(yaw), 0.0, -sin(yaw),  // 1. column
 					 0, 1.0, 0.0,  // 2. column
 					 sin(yaw), 0, cos(yaw)); // 3. column
