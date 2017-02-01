@@ -19,10 +19,10 @@ struct Intersection
 /* ----------------------------------------------------------------------------*/
 /* GLOBAL VARIABLES                                                            */
 
-#define MOVE 0.1f;
-#define PI 3.14159265359f;
-const int SCREEN_WIDTH = 500;
-const int SCREEN_HEIGHT = 500;
+#define MOVE 0.1f
+#define PI 3.14159265359f
+const int SCREEN_WIDTH = 250;
+const int SCREEN_HEIGHT = 250;
 SDL_Surface* screen;
 float focalLength = SCREEN_HEIGHT / 4.0f;
 vec3 cameraPos(0,0,-1.5);
@@ -32,6 +32,9 @@ float angle = 0.0f;
 
 vector<Triangle> triangles;
 int t;
+
+vec3 lightPos( 0, -0.5, -0.7 );
+vec3 lightColor = 14.f * vec3( 1, 1, 1 ) * 5.0f;
 
 /* ----------------------------------------------------------------------------*/
 /* FUNCTIONS                                                                   */
@@ -97,7 +100,7 @@ bool ClosestIntersection(
     float u = x.y;
     float v = x.z;
     if (t < closestIntersection.distance &&
-        t >= 0 && 
+        t >= 0 &&
         CheckIntersection( u, v ) )
     {
       closestIntersection.distance = t;
@@ -136,6 +139,8 @@ void Update()
 	forward *= 0.1;
 	right *= 0.1;
 
+
+	//Camera Position
   if( keystate[SDLK_UP] )
   {
   // Move camera forward
@@ -147,24 +152,44 @@ void Update()
   // Move camera backward
     cameraPos -= forward;
   }
-  if( keystate[SDLK_LEFT] )
+  if( keystate[SDLK_z] )
   {
   // Move camera to the left
     cameraPos -= right;
   }
-  if( keystate[SDLK_RIGHT] )
+  if( keystate[SDLK_x] )
   {
   // Move camera to the right
     cameraPos += right;
   }
 
-	if( keystate[SDLK_a]){
+	//Rotation
+	if( keystate[SDLK_LEFT]){
 		angle += 5.0;
 	}
 
-	if( keystate[SDLK_d]){
+	if( keystate[SDLK_RIGHT]){
 		angle -= 5.0;
 	}
+
+	//Light position
+	if( keystate[SDLK_w] )
+		lightPos += forward;
+
+	if( keystate[SDLK_s] )
+		lightPos -= forward;
+
+	if( keystate[SDLK_a] )
+		lightPos -= right;
+
+	if( keystate[SDLK_d] )
+		lightPos += right;
+
+	if( keystate[SDLK_q] )
+		lightPos -= down;
+
+	if( keystate[SDLK_e] )
+		lightPos += down;
 
 
 
@@ -178,6 +203,20 @@ void Update()
 					 0, 1.0, 0.0,  // 2. column
 					 sin(yaw), 0, cos(yaw)); // 3. column
 
+}
+
+
+vec3 DirectLight( const Intersection& i ){
+
+
+	vec3 r = lightPos - i.position ;
+	vec3 r_normal = normalize(r);
+
+	float max1 =  max((float)dot(triangles[i.triangleIndex].normal , r_normal),0.0f);
+
+	vec3 illuminationColour = max1 * lightColor / ( 4.0f * powf(r.length(),2) * PI )  ;
+
+	return illuminationColour;
 }
 
 void Draw()
@@ -199,17 +238,18 @@ void Draw()
 
       Intersection inter;
       inter.distance = numeric_limits<float>::max();
-      vec3 color;
+      vec3 colour;
       if (ClosestIntersection(cameraPos, d, triangles, inter))
       {
-        color = triangles[inter.triangleIndex].color; 
+        colour = triangles[inter.triangleIndex].color;
+				colour *= DirectLight(inter);
       } 
       else
       { 
-        color = vec3(0, 0, 0);
+        colour = vec3(0, 0, 0);
       }
 			//vec3 color( 1.0, 0.0, 0.0 );
-			PutPixelSDL( screen, x, y, color );
+			PutPixelSDL( screen, x, y, colour );
 		}
 	}
 
