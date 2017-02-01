@@ -20,8 +20,8 @@ struct Intersection
 /* GLOBAL VARIABLES                                                            */
 
 #define MOVE 0.1f;
-const int SCREEN_WIDTH = 100;
-const int SCREEN_HEIGHT = 100;
+const int SCREEN_WIDTH = 500;
+const int SCREEN_HEIGHT = 500;
 SDL_Surface* screen;
 float focalLength = SCREEN_HEIGHT / 4.0f;
 vec3 cameraPos(0,0,-1.5);
