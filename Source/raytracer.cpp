@@ -20,11 +20,16 @@ struct Intersection
 /* GLOBAL VARIABLES                                                            */
 
 #define MOVE 0.1f;
+#define PI 3.14159265359f;
 const int SCREEN_WIDTH = 500;
 const int SCREEN_HEIGHT = 500;
 SDL_Surface* screen;
 float focalLength = SCREEN_HEIGHT / 4.0f;
 vec3 cameraPos(0,0,-1.5);
+
+mat3 R;
+float angle = 0.0f;
+
 vector<Triangle> triangles;
 int t;
 
@@ -91,7 +96,7 @@ bool ClosestIntersection(
     float t = x.x;
     float u = x.y;
     float v = x.z;
-    if (t < closestIntersection.distance && 
+    if (t < closestIntersection.distance &&
         t >= 0 && 
         CheckIntersection( u, v ) )
     {
@@ -114,6 +119,8 @@ void Update()
 	cout << "Render time: " << dt << " ms." << endl;
   
   Uint8* keystate = SDL_GetKeyState( 0 );
+
+
   if( keystate[SDLK_UP] )
   {
   // Move camera forward
@@ -134,10 +141,29 @@ void Update()
   // Move camera to the right
     cameraPos.x += MOVE;
   }
+
+	if( keystate[SDLK_a]){
+		angle += 5.0;
+	}
+
+	if( keystate[SDLK_d]){
+		angle -= 5.0;
+	}
+
+	float yaw;
+	yaw =  (angle /180) * PI ;
+
+	R = mat3(cos(yaw), 0.0, -sin(yaw),  // 1. column
+					 0, 1.0, 0.0,  // 2. column
+					 sin(yaw), 0, cos(yaw)); // 3. column
+
 }
 
 void Draw()
 {
+
+
+
 	if( SDL_MUSTLOCK(screen) )
 		SDL_LockSurface(screen);
 
@@ -145,7 +171,11 @@ void Draw()
 	{
 		for( int x=0; x<SCREEN_WIDTH; ++x )
 		{
-      vec3 d(x - SCREEN_WIDTH / 2.0f, y - SCREEN_HEIGHT / 2.0f, focalLength);
+
+			vec3 d(x - SCREEN_WIDTH / 2.0f, y - SCREEN_HEIGHT / 2.0f, focalLength);
+
+			d = d*R;
+
       Intersection inter;
       inter.distance = numeric_limits<float>::max();
       vec3 color;
