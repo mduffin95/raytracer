@@ -67,8 +67,8 @@ int main( int argc, char* argv[] )
 
 bool CheckIntersection( float u, float v )
 {
-    if (u > 0 && 
-        v > 0 && 
+    if (u >= 0 &&
+        v >= 0 &&
         u + v <= 1)
     {
       return true;
