@@ -45,7 +45,7 @@ bool ClosestIntersection(
   vec3 start,
   vec3 dir,
   const vector<Triangle>& triangles,
-  Intersection& closestIntersection );
+  Intersection& closestIntersection, int index );
 
 bool CheckIntersection( float u, float v );
 
@@ -55,11 +55,11 @@ int main( int argc, char* argv[] )
 	t = SDL_GetTicks();	// Set start value for timer.
 
   LoadTestModel( triangles );
-	//while( NoQuitMessageSDL() )
-	//{
+	while( NoQuitMessageSDL() )
+	{
 		Update();
 		Draw();
-	//}
+	}
 
 	SDL_SaveBMP( screen, "screenshot.bmp" );
 	return 0;
@@ -81,7 +81,7 @@ bool ClosestIntersection(
   vec3 start,
   vec3 dir,
   const vector<Triangle>& triangles,
-  Intersection& closestIntersection )
+  Intersection& closestIntersection , int index )
 {
   bool result = false;
   for (unsigned i=0; i<triangles.size(); i++)
@@ -101,7 +101,8 @@ bool ClosestIntersection(
     float v = x.z;
     if (t < closestIntersection.distance &&
         t >= 0 &&
-        CheckIntersection( u, v ) )
+        CheckIntersection( u, v) &&
+				i != index )
     {
       closestIntersection.distance = t;
       closestIntersection.position = start + t * dir;
@@ -216,7 +217,7 @@ vec3 DirectLight( const Intersection& i, const vector<Triangle>& triangles ){
 	//Check closest intersection between camera position
 	Intersection lightIntersection;
 	lightIntersection.distance = 1;
-	if(ClosestIntersection(i.position,r,triangles,lightIntersection)){
+	if(ClosestIntersection(i.position,r,triangles,lightIntersection, i.triangleIndex)){
 		return vec3(0,0,0);
 	}
 
@@ -247,7 +248,7 @@ void Draw()
       Intersection inter;
       inter.distance = numeric_limits<float>::max();
       vec3 colour;
-      if (ClosestIntersection(cameraPos, d, triangles, inter))
+      if (ClosestIntersection(cameraPos, d, triangles, inter, -1))
       {
         colour = triangles[inter.triangleIndex].color;
 				colour *= DirectLight(inter, triangles);
