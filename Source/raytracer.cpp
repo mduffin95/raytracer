@@ -21,11 +21,11 @@ struct Intersection
 
 #define MOVE 0.1f
 #define PI 3.14159265359f
-const int SCREEN_WIDTH = 250;
-const int SCREEN_HEIGHT = 250;
+const int SCREEN_WIDTH = 500;
+const int SCREEN_HEIGHT = 500;
 SDL_Surface* screen;
-float focalLength = SCREEN_HEIGHT / 4.0f;
-vec3 cameraPos(0,0,-1.5);
+float focalLength = SCREEN_HEIGHT / 1.2f;
+vec3 cameraPos(0,0,-2.5);
 
 mat3 R;
 float angle = 0.0f;
@@ -55,11 +55,11 @@ int main( int argc, char* argv[] )
 	t = SDL_GetTicks();	// Set start value for timer.
 
   LoadTestModel( triangles );
-	while( NoQuitMessageSDL() )
-	{
+	//while( NoQuitMessageSDL() )
+	//{
 		Update();
 		Draw();
-	}
+	//}
 
 	SDL_SaveBMP( screen, "screenshot.bmp" );
 	return 0;
@@ -206,15 +206,23 @@ void Update()
 }
 
 
-vec3 DirectLight( const Intersection& i ){
+vec3 DirectLight( const Intersection& i, const vector<Triangle>& triangles ){
 
 
 	vec3 r = lightPos - i.position ;
 	vec3 r_normal = normalize(r);
+	float light_distance  = r.length();
+
+	//Check closest intersection between camera position
+	Intersection lightIntersection;
+	lightIntersection.distance = 1;
+	if(ClosestIntersection(i.position,r,triangles,lightIntersection)){
+		return vec3(0,0,0);
+	}
 
 	float max1 =  max((float)dot(triangles[i.triangleIndex].normal , r_normal),0.0f);
 
-	vec3 illuminationColour = max1 * lightColor / ( 4.0f * powf(r.length(),2) * PI )  ;
+	vec3 illuminationColour = max1 * lightColor / ( 4.0f * powf(light_distance,2) * PI )  ;
 
 	return illuminationColour;
 }
@@ -242,8 +250,8 @@ void Draw()
       if (ClosestIntersection(cameraPos, d, triangles, inter))
       {
         colour = triangles[inter.triangleIndex].color;
-				colour *= DirectLight(inter);
-      } 
+				colour *= DirectLight(inter, triangles);
+      }
       else
       { 
         colour = vec3(0, 0, 0);
