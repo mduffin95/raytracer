@@ -33,8 +33,11 @@ float angle = 0.0f;
 vector<Triangle> triangles;
 int t;
 
+//Light values
 vec3 lightPos( 0, -0.5, -0.7 );
 vec3 lightColor = 14.f * vec3( 1, 1, 1 ) * 5.0f;
+vec3 indirectLight = 0.5f*vec3( 1, 1, 1 );
+float p = 0.75;
 
 /* ----------------------------------------------------------------------------*/
 /* FUNCTIONS                                                                   */
@@ -193,12 +196,6 @@ void Update()
 	if( keystate[SDLK_e] )
 		lightPos += down;
 
-
-
-	cout << angle;
-
-
-
 	yaw =  (angle /180) * PI ;
 	//vec3 forward(R[2][0], R[2][1], R[2][2]);
 	R = mat3(cos(yaw), 0.0, -sin(yaw),  // 1. column
@@ -252,7 +249,7 @@ void Draw()
       if (ClosestIntersection(cameraPos, d, triangles, inter, -1))
       {
         colour = triangles[inter.triangleIndex].color;
-				colour *= DirectLight(inter, triangles);
+				colour *= p*(DirectLight(inter, triangles)+indirectLight);
       }
       else
       { 
