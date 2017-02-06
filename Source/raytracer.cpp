@@ -99,7 +99,8 @@ bool ClosestIntersection(
     float t = x.x;
     float u = x.y;
     float v = x.z;
-    if (t < closestIntersection.distance &&
+		//Changed t < d to t <= d, to fix shadow bug
+    if (t <= closestIntersection.distance &&
         t >= 0 &&
         CheckIntersection( u, v) &&
 				i != index )
