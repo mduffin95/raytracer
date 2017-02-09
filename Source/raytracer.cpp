@@ -52,6 +52,19 @@ bool ClosestIntersection(
 
 bool CheckIntersection( float u, float v );
 
+
+/* ----------------------------------------------------------------------------*/
+/* EXTAS                                                                       */
+
+//TODO: Soft shadows
+//TODO: Experiment with better illumination, i.e see slides
+//TODO: Optimisation techniques (Serial + Parallel)
+//TODO: Shadings / textures
+//TODO: Anti Aliasing
+
+
+
+
 int main( int argc, char* argv[] )
 {
 	screen = InitializeSDL( SCREEN_WIDTH, SCREEN_HEIGHT );
