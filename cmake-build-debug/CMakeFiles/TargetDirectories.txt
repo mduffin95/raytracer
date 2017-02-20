@@ -1,0 +1,3 @@
+/Users/johng/repos/raytracer/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/johng/repos/raytracer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/johng/repos/raytracer/cmake-build-debug/CMakeFiles/Computer_Graphics.dir

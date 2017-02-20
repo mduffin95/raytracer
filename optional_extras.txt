@@ -1,0 +1,4 @@
+Optional extras
+1. OpenCL
+2. Anti Aliasing
+3. Realistic light reflection
